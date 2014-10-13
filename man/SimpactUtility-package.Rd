@@ -3,12 +3,10 @@
 \alias{SimpactUtility}
 \docType{package}
 \title{
-What the package does (short line)
-~~ package title ~~
+Utility functions for Simpact Cyan
 }
 \description{
-More about what it does (maybe more than one line)
-~~ A concise (1-5 lines) description of the package ~~
+Utility functions for Simpact Cyan
 }
 \details{
 \tabular{ll}{
