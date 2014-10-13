@@ -1,5 +1,5 @@
 uni.configure<-function(raw.cfg){
-  
+  # if input arg is missing
   if(missing(raw.cfg)){
     # input from keyboard
     options(warn=-1)
@@ -9,7 +9,11 @@ uni.configure<-function(raw.cfg){
     while(in.name!=""){
       cat('Value:')
       in.value<-readline()
-      cfg[in.name]<-as.numeric(in.value)
+      if(substr(in.name,nchar(in.name)-8,nchar(in.name))=='dist.type'){
+        cfg[in.name]<-in.value
+      }else{
+        cfg[in.name]<-as.numeric(in.value)
+      }
       cat('Parameter name:')
       in.name<-readline()
     }
@@ -24,21 +28,22 @@ uni.configure<-function(raw.cfg){
     }
     
   }else{
-  
-  # input from files (.csv)  
-  if(is.character(raw.cfg)){
+  # if not missing
+    # input from files (.csv)  
+    if(is.character(raw.cfg)){
     # read .csv files
     type<-substr(raw.cfg,nchar(raw.cfg)-2,nchar(raw.cfg))
     if(type=='csv'){
       raw.cfg<-read.csv(raw.cfg)
     }
   }
-  # convert other types of input parameters into cfg list
-  if(is.data.frame(raw.cfg)){
+    # convert other types of input parameters into cfg list
+    if(is.data.frame(raw.cfg)){
     # data frame to list
     cfg<-as.list(raw.cfg)
   }
-  if(is.list(raw.cfg)){
+    # use list directly
+    if(is.list(raw.cfg)){
     # use list directly
     cfg<-raw.cfg
   }
