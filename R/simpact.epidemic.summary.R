@@ -1,0 +1,69 @@
+simpact.epidemic.summary<-function(logfile,time.range,age.range,...){
+  plog<-sprintf('%spersonlog.csv',logfile)
+  rlog<-sprintf('%srelationlog.csv',logfile)
+  persons<-read.csv(plog)
+  relations<-read.csv(rlog)
+  persons<-persons[order(persons$ID),]
+  if(missing(time.range)){time.range<-c(2,max(ceiling(relations$FormTime)))}
+  if(missing(age.range)){age.range<-c(15,49)}
+  # remove nodes and edges out of age range
+  t1<-time.range[1];t2<-time.range[2]
+  a1<-age.range[1];a2<-age.range[2]
+  del.persons<-which(persons$TOD<t1|(persons$TOB+a1)>t2|(persons$TOB+a2)<t1)
+  persons<-persons[persons$ID[-del.persons],]
+  relations<-relations[relations$FormTime<=t2&relations$DisTime>=t1,]
+  relations<-relations[relations$IDm%in%persons$ID&relations$IDw%in%persons$ID,]
+  years<-(ceiling(t1)):(floor(t2))
+  # construct output
+  s<-list()
+  s$years<-years
+  
+  attach(persons)
+  
+  adult.male<-c();adult.female<-c()
+  no.adult.male<-c();no.adult.female<-c()
+  no.relation<-c()
+  infection.male<-c();infection.female<-c()
+  positive.male<-c();positive.female<-c()
+  treat.male<-c();treat.female<-c()
+  born<-c()
+  dead.male<-c();dead.female<-c()
+  for (i in 1:length(years)){
+    alive<-TOD>years[i]&(years[i]-TOB>a1)&(years[i]-TOB<=a2)
+    no.adult.male[i]<-sum(alive&Gender==0)
+    no.adult.female[i]<-sum(alive&Gender==1)
+    infection.male[i]<-sum(in.range(InfectTime,years[i]-1,years[i])&Gender==0)
+    infection.female[i]<-sum(in.range(InfectTime,years[i]-1,years[i])&Gender==1)
+    positive.male[i]<-sum(InfectTime<years[i]&TOD>years[i]&Gender==0)
+    positive.female[i]<-sum(InfectTime<years[i]&TOD>years[i]&Gender==1)
+    no.relation[i]<-sum(relations$FormTime<years[i]&relations$DisTime>years[i])
+    treat<-TreatTime<years[i]
+    treat.male[i]<-sum(pmin(TOD[treat&Gender==0],years[i])-pmax(TreatTime[treat&Gender==0],years[i]-1))
+    treat.female[i]<-sum(pmin(TOD[treat&Gender==1],years[i])-pmax(TreatTime[treat&Gender==1],years[i]-1))
+    born[i]<-sum(in.range(TOB,years[i]-1,years[i]))
+    dead.male[i]<-sum(in.range(TOD,years[i]-1,years[i])&is.finite(InfectTime)&Gender==0)
+    dead.female[i]<-sum(in.range(TOD,years[i]-1,years[i])&is.finite(InfectTime)&Gender==1)
+  }
+  inc<-(infection.male+infection.female)/(no.adult.male+no.adult.female)
+  prev<-(positive.male+positive.female)/(no.adult.male+no.adult.female)
+  s$no.relations<-no.relation
+  s$male.alive<-no.adult.male
+  s$female.alive<-no.adult.female
+  s$male.infection<-infection.male
+  s$female.infection<-infection.female
+  s$male.positive<-positive.male
+  s$female.positive<-positive.female
+  s$male.treat.time<-treat.male
+  s$female.treat.time<-treat.female
+  s$male.death<-dead.male
+  s$female.death<-dead.female
+  s$new.born<-born
+  s$total.alive<-nrow(persons)
+  s$total.relation<-nrow(relations)
+  s$total.infection<-sum(in.range(InfectTime,t1,t2))
+  
+  s$peak.incidence<-years[peak(inc)]
+  s$max.prevalence<-prev[peak(prev)]
+  detach(persons)
+  s
+}
