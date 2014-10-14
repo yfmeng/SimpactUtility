@@ -1,20 +1,7 @@
-snapshot<-function(g,t){
-  snap<-g
-  nodes<-get.vertex.attribute(snap,'TOB')<t&get.vertex.attribute(snap,'TOD')>t
-  try(snap<-g%s%which(nodes))
-  del.edges<-get.edge.attribute(snap,'FormTime')>t|get.edge.attribute(snap,'DisTime')<t
-  if(sum(del.edges)>=1){snap<-delete.edges(snap,which(del.edges))}
-  set.vertex.attribute(snap,'age',t-get.vertex.attribute(snap,'TOB'))
-}
-in.range<-function(x,a,b,...){
-  if(!exists('left.include')){left.include=F}
-  if(!exists('right.include')){right.include=F}
-  test<-x>a&x<b
-  if(left.include){x<-x|x==a}
-  if(right.include){x<-x|x==b}
-  test
-}
-peak<-function(x){
-  m<-max(x)
-  m<-which(x==m)[1]
+peak<-function(x,match=F,...){
+  if(missing(match)){match=F}
+  x<-as.numeric(x)
+  if(sum(is.na(x))>0){print('Element with invalid data format')}
+  m<-which(x==max(x))
+  if(!match){m<-m[1]}
 }

@@ -14,7 +14,7 @@ uni.configure<-function(raw.cfg){
       }else{
         cfg[in.name]<-as.numeric(in.value)
       }
-      cat('Parameter name:')
+      cat('Parameter name or enter to exit:')
       in.name<-readline()
     }
     while(sum(is.na(cfg))>0){
@@ -40,7 +40,7 @@ uni.configure<-function(raw.cfg){
     # convert other types of input parameters into cfg list
     if(is.data.frame(raw.cfg)){
     # data frame to list
-    cfg<-as.list(raw.cfg)
+    cfg<-split(raw.cfg[,2:ncol(df)],raw.cfg[,1])
   }
     # use list directly
     if(is.list(raw.cfg)){
