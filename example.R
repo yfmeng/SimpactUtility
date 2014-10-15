@@ -87,7 +87,7 @@ hist(test.ABC.2$param[,1])
 
 
 #############################
-#### run a toy Simpact
+#### run a toy Simpact plot with shiny
 #############################
 
 ###### other users can run from github

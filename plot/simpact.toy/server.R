@@ -1,3 +1,15 @@
+if(!require(SimpactUtility)){
+  install.packages('devtools')
+  library(devtools)
+  # install from git
+  install_github(repo="SimpactUtility",username='yfmeng')
+}
+if(!require(simpact)){
+  install.packages("simpact", repos="http://research.edm.uhasselt.be/jori")
+}
+if(!require(network)){
+  install.packages('network')
+}
 library(SimpactUtility)
 library(simpact)
 library(shiny)
