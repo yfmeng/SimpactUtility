@@ -1,4 +1,4 @@
-simpact.network.summary<-function(g){
+network.summary<-function(g){
   # some summarising network features
   # g is a network converted by f<-simpact2network(logfile)
  require(network)

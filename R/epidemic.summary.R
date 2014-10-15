@@ -1,0 +1,87 @@
+epidemic.summary<-function(log,dir,time.range,age.range,interval,...){
+  if(missing(dir)){dir<-getwd()}
+  if(length(log)==1){
+    # log is ID
+    persons<-read.csv(sprintf('%s/%spersonlog.csv',dir,log))
+    relations<-read.csv(sprintf('%s/%srelationlog.csv',dir,log))
+    cfgtxt<-readLines(sprintf('%s/%config.txt',dir,log))
+  }else{
+    # log is the output from simpact.run
+    persons<-read.csv(as.list(log)[['logpersons']])
+    relations<-read.csv(as.list(log)[['logrelations']])
+    cfgtxt<-readLines(as.list(log)[['configfile']])
+  }  
+  sim.time<-cfgtxt[grep('simtime',cfgtxt)]
+  sim.time<-as.numeric(strsplit(sim.time,'=')[[1]][2])
+  rm(cfgtxt)
+  if(missing(time.range)){time.range<-c(2,sim.time)}
+  if(missing(age.range)){age.range<-c(15,49)}
+  if(missing(interval)){interval<-1}
+  persons<-persons[order(persons$ID),]
+  # remove nodes and edges out of age range
+  t1<-time.range[1];t2<-time.range[2]
+  a1<-age.range[1];a2<-age.range[2]
+  del.persons<-which(persons$TOD<t1|(persons$TOB+a1)>t2|(persons$TOB+a2)<t1)
+  persons<-persons[persons$ID[-del.persons],]
+  relations<-relations[relations$FormTime<=t2&relations$DisTime>=t1,]
+  relations<-relations[relations$IDm%in%persons$ID&relations$IDw%in%persons$ID,]
+  times<-seq(t1,t2,by=interval)
+  # construct output
+  s<-list()
+  s$times<-times
+  s$interval<-interval
+  attach(persons)
+  
+  adult.male<-c();adult.female<-c()
+  no.adult.male<-c();no.adult.female<-c()
+  no.relation<-c()
+  infection.male<-c();infection.female<-c()
+  positive.male<-c();positive.female<-c()
+  hiv.male<-c();hiv.female<-c()
+  treat.male<-c();treat.female<-c()
+  born<-c()
+  dead.male<-c();dead.female<-c()
+  for (i in 1:length(times)){
+    alive<-TOD>times[i]&(times[i]-TOB>a1)&(times[i]-TOB<=a2)
+    no.adult.male[i]<-sum(alive&Gender==0)
+    no.adult.female[i]<-sum(alive&Gender==1)
+    infection.male[i]<-sum(in.range(InfectTime,times[i]-interval,times[i])&Gender==0)
+    infection.female[i]<-sum(in.range(InfectTime,times[i]-interval,times[i])&Gender==1)
+    positive.male[i]<-sum(InfectTime<times[i]&TOD>times[i]&Gender==0)
+    positive.female[i]<-sum(InfectTime<times[i]&TOD>times[i]&Gender==1)
+    no.relation[i]<-sum(relations$FormTime<times[i]&relations$DisTime>times[i])
+    hiv<-InfectTime<times[i]
+    hiv.male[i]<-sum(pmin(InfectTime[hiv&Gender==0],times[i])-pmax(InfectTime[hiv&Gender==0],times[i]-interval))
+    hiv.female[i]<-sum(pmin(InfectTime[hiv&Gender==1],times[i])-pmax(InfectTime[hiv&Gender==1],times[i]-interval))
+    treat<-TreatTime<times[i]
+    treat.male[i]<-sum(pmin(TOD[treat&Gender==0],times[i])-pmax(TreatTime[treat&Gender==0],times[i]-interval))
+    treat.female[i]<-sum(pmin(TOD[treat&Gender==1],times[i])-pmax(TreatTime[treat&Gender==1],times[i]-interval))
+    born[i]<-sum(in.range(TOB,times[i]-interval,times[i]))
+    dead.male[i]<-sum(in.range(TOD,times[i]-interval,times[i])&is.finite(InfectTime)&Gender==0)
+    dead.female[i]<-sum(in.range(TOD,times[i]-interval,times[i])&is.finite(InfectTime)&Gender==1)
+  }
+  inc<-(infection.male+infection.female)/(no.adult.male+no.adult.female)
+  prev<-(positive.male+positive.female)/(no.adult.male+no.adult.female)
+  s$no.relations<-no.relation
+  s$male.alive<-no.adult.male
+  s$female.alive<-no.adult.female
+  s$male.infection<-infection.male
+  s$female.infection<-infection.female
+  s$male.positive<-positive.male
+  s$female.positive<-positive.female
+  s$male.in.hiv<-hiv.male
+  s$female.in.hiv<-hiv.female
+  s$male.treat.time<-treat.male
+  s$female.treat.time<-treat.female
+  s$male.hiv.death<-dead.male
+  s$female.hiv.death<-dead.female
+  s$new.born<-born
+  s$total.alive<-nrow(persons)
+  s$total.relation<-nrow(relations)
+  s$total.infection<-sum(in.range(InfectTime,t1,t2))
+  
+  s$peak.incidence<-years[peak(inc)]
+  s$max.prevalence<-prev[peak(prev)]
+  detach(persons)
+  s
+}

@@ -12,5 +12,6 @@ simpact.abc.model<-function(inputvector){
     }
     results <- simpact.run(cfg, getwd())
     outputvector <- simpact.abc.target(results)
- 
+    file.remove(results)
+    outputvector 
 }

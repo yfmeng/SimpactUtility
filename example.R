@@ -11,7 +11,7 @@ library(simpact)
 library(SimpactUtility)
 library(EasyABC)
 # setup the working directory as you wish
-folder<- '/Users/feimeng/Dropbox/Papers_FeiMeng/NetStructSim/Rproject/NetStructSim/test'
+folder<- '/Users/feimeng/SimpactUtility/test'
 setwd(folder)
 
 ###################################
