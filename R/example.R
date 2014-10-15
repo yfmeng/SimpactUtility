@@ -92,12 +92,12 @@ hist(test.ABC.2$param[,1])
 
 ###### other users can run from github
 library(shiny)
-runGitHub( repo="SimpactUtility", username="yfmeng", subdir = "plot/simpact.toy/") 
+runGitHub( repo="SimpactShiny", username="yfmeng", subdir = "plot/simpact.toy/") 
 
 # or run locally 
 # first find the directory of simpact.toy 
 #e.g:
-folder<-'/Users/feimeng/SimpactUtility/plot'
+folder<-'/Users/feimeng/SimpactShiny/plot'
 app.address<-sprintf('%s/simpact.toy',folder)
 runApp(app.address)
 
@@ -106,7 +106,7 @@ runApp(app.address)
 #############################
 
 # specify where are the shiny Apps:
-folder<-'/Users/feimeng/SimpactUtility/plot'
+folder<-'/Users/feimeng/SimpactShiny/plot'
 type<-'network'
 simpact.shiny.plot(type,folder)
 # I put some test output files in the folder ~/SimpactUtility/plot/data
