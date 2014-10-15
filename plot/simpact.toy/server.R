@@ -1,8 +1,9 @@
-library(shiny)
 library(SimpactUtility)
+library(simpact)
+library(shiny)
 library(network)
 #source(helpers.R)
-# runApp('/Users/feimeng/SimpactUtility/R/plot.network')
+# runApp('/Users/feimeng/SimpactUtility/plot/simpact.toy')
 shinyServer(function(input, output) {
   
   output$toyPlot <- renderPlot({
