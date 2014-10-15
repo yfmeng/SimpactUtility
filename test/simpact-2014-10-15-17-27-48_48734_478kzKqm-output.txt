@@ -1,7 +1,0 @@
-# read seed from /dev/urandom
-# Using seed 1073805256
-# mNRM: using advanced algorithm
-# Release version
-# Simpact version is: 0.11.2
-# Number of events executed is 2181
-# Started with 200 people, ending with 200 (difference is 0)
