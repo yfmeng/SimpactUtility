@@ -4,11 +4,12 @@ library(SimpactUtility)
 shinyServer(function(input, output) {
   
   output$prevPlot <- renderPlot({
+    dir<-input$dir
+    log<-input$log
     age.range<-input$age
     time.range<-input$time
     gender<-input$gender
-    # temp
-    logfile<-"/Users/feimeng/Dropbox/Papers_FeiMeng/NetStructSim/Rproject/NetStructSim/test/test."
+    logfile<-sprintf('%s/%s',dir,log)
     g<-simpact.epidemic.summary(logfile,time.range,age.range)
     if (gender[1]==1){
       plot(g$male.positive/g$male.alive,ylim=c(0,g$max.prevalence+0.1),type='l',col='blue',xlab='Year',ylab='Prevalence')

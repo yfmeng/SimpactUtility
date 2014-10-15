@@ -6,10 +6,12 @@ library(network)
 shinyServer(function(input, output) {
   
   output$netPlot <- renderPlot({
+    dir<-input$dir
+    log<-input$log
     age.range<-input$age
     time.range<-input$time
     # temp
-    logfile<-"/Users/feimeng/Dropbox/Papers_FeiMeng/NetStructSim/Rproject/NetStructSim/test/test."
+    logfile<-sprintf('%s/%s',dir,log)
     g<-simpact2network(logfile)
     TOB<-get.vertex.attribute(g,'TOB')
     delete.nodes<-(TOB+age.range[1])>time.range[2]|(TOB+age.range[2])<time.range[1]
