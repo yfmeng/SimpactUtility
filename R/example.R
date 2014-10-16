@@ -33,6 +33,16 @@ test.2<-simpact.run(uni.configure(),folder)
 
 # uni.configure can also reads data frame and .csv files 
 
+# convert output to network
+net.1<-simpact2network(test.1)
+# summary statistics of the network
+network.summary(net.1)
+# summary epidemic statistics 
+epidemic.summary(test.1)
+# what's there
+names(epidemic.summary(test.1))
+# summary of specified age group during specified time period
+epidemic.summary(test.1, time.range=c(5,15), age.range=c(15,50))
 
 ###################################
 #### use ABC

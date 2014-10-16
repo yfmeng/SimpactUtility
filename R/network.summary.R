@@ -17,5 +17,5 @@ network.summary<-function(g){
  s['giant']<-sum(component.largest(g))
  s['connectedness']<-connectedness(g)
  s['efficiency']<-efficiency(g)
-
+ s
 }

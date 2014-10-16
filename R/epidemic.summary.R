@@ -51,8 +51,8 @@ epidemic.summary<-function(log,dir,time.range,age.range,interval,...){
     positive.female[i]<-sum(InfectTime<times[i]&TOD>times[i]&Gender==1)
     no.relation[i]<-sum(relations$FormTime<times[i]&relations$DisTime>times[i])
     hiv<-InfectTime<times[i]
-    hiv.male[i]<-sum(pmin(InfectTime[hiv&Gender==0],times[i])-pmax(InfectTime[hiv&Gender==0],times[i]-interval))
-    hiv.female[i]<-sum(pmin(InfectTime[hiv&Gender==1],times[i])-pmax(InfectTime[hiv&Gender==1],times[i]-interval))
+    hiv.male[i]<-sum(times[i]-pmax(InfectTime[hiv&Gender==0],times[i]-interval))
+    hiv.female[i]<-sum(times[i]-pmax(InfectTime[hiv&Gender==1],times[i]-interval))
     treat<-TreatTime<times[i]
     treat.male[i]<-sum(pmin(TOD[treat&Gender==0],times[i])-pmax(TreatTime[treat&Gender==0],times[i]-interval))
     treat.female[i]<-sum(pmin(TOD[treat&Gender==1],times[i])-pmax(TreatTime[treat&Gender==1],times[i]-interval))
@@ -80,7 +80,7 @@ epidemic.summary<-function(log,dir,time.range,age.range,interval,...){
   s$total.relation<-nrow(relations)
   s$total.infection<-sum(in.range(InfectTime,t1,t2))
   
-  s$peak.incidence<-years[peak(inc)]
+  s$peak.incidence<-times[peak(inc)]
   s$max.prevalence<-prev[peak(prev)]
   detach(persons)
   s
